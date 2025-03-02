@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
@@ -14,17 +13,26 @@ const services = [
   {
     id: "residential",
     title: "Residential",
-    image: "/image2.jpeg", // Replace with actual image path
+    image: "/image1.jpeg", // Replace with actual image path
   },
   {
-    id: "plots",
-    title: "Plots",
-    image: "/image3.jpeg", // Replace with actual image path
+    id: "villas", // Updated from "plots" to "villas"
+    title: "Villas", // Updated title
+    image: "/image1.jpeg", // Replace with actual image path
   },
 ];
 
 export default function HeroSection() {
-  const [selectedService, setSelectedService] = useState(services[0]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  // Auto cycle through images every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSelectedIndex((prevIndex) => (prevIndex + 1) % services.length);
+    }, 3000); // Change every 3 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   const [isVisible, setIsVisible] = useState({
     whoWeAre: false,
     services: false,
@@ -195,108 +203,52 @@ export default function HeroSection() {
         </motion.div>
       </section>
 
-      {/* Our Services Section */}
-      <section
-        id="services"
-        className="animate-section max-w-7xl mx-auto py-16 px-6"
-      >
-        <motion.div
-          className="mb-6"
-          variants={fadeIn}
-          initial="hidden"
-          animate={isVisible.services ? "visible" : "hidden"}
-        >
-          <h3 className="font-playfair text-3xl font-semibold text-gray-800">
-            Our Services
-          </h3>
-          <div className="w-16 h-1 bg-gray-400 mt-1"></div>
-        </motion.div>
-        <motion.p
-          className="font-montserrat text-xl text-gray-600 mb-8"
-          variants={fadeIn}
-          initial="hidden"
-          animate={isVisible.services ? "visible" : "hidden"}
-          transition={{ delay: 0.2 }}
-        >
-          Best Solutions In Residential, Commercial, And Plotting Segments
-        </motion.p>
-        <div className="flex flex-col md:flex-row gap-6">
+      <section id="services" className="animate-section py-24 px-6 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
           <motion.div
-            className="flex-1"
-            variants={fadeIn}
-            initial="hidden"
-            animate={isVisible.services ? "visible" : "hidden"}
-            transition={{ delay: 0.3 }}
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              key={selectedService.id}
-            >
-              <Image
-                src={selectedService.image}
-                alt={selectedService.title}
-                width={800}
-                height={500}
-                className="rounded-lg shadow-lg w-full h-auto object-cover"
-              />
-            </motion.div>
+            <h2 className="font-playfair text-4xl font-semibold text-gray-800 mb-2">
+              Our Services
+            </h2>
+            <div className="w-24 h-1 bg-primary mx-auto mt-2 mb-4"></div>
+            <p className="font-montserrat text-xl text-gray-600 max-w-2xl mx-auto">
+              Best Solutions In Residential, Commercial, And Plotting Segments
+            </p>
           </motion.div>
+
+          {/* Service Card with Auto Image Change */}
           <motion.div
-            className="flex flex-col gap-4"
-            variants={staggerContainer}
-            initial="hidden"
-            animate={isVisible.services ? "visible" : "hidden"}
+            className="w-full h-[1000px] overflow-hidden rounded-xl shadow-xl relative"
+            key={services[selectedIndex].id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
           >
-            {services.map((service) => (
-              <motion.button
-                key={service.id}
-                variants={popIn}
-                whileHover={{
-                  scale: 1.05,
-                  transition: { duration: 0.3 },
-                }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedService(service)}
-                className={`relative w-32 md:w-40 h-48 flex items-center justify-center text-white text-lg font-medium rounded-lg overflow-hidden transition-all ${
-                  selectedService.id === service.id
-                    ? "brightness-100 ring-2 ring-offset-2 ring-black"
-                    : "brightness-50 hover:brightness-75"
-                }`}
-                style={{
-                  backgroundImage: `url(${service.image})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              >
-                <span className="absolute inset-0 bg-black/40"></span>
-                <span className="relative z-10 font-montserrat">
-                  {service.title}
-                </span>
-              </motion.button>
-            ))}
+            <Image
+              src={services[selectedIndex].image}
+              alt={services[selectedIndex].title}
+              layout="fill"
+              objectFit="cover"
+              className="transition-transform duration-700"
+              priority
+            />
+
+            {/* Overlay for Title and Description */}
+            <div className="absolute inset-x-0 bottom-0 p-10 bg-gradient-to-t from-black/90 via-black/60 to-transparent pt-32">
+              <h3 className="font-playfair text-4xl font-semibold mb-4 text-white">
+                {services[selectedIndex].title}
+              </h3>
+              <p className="font-montserrat text-xl text-white/90 max-w-xl">
+                Explore our premium {services[selectedIndex].title} projects
+                designed for modern living.
+              </p>
+            </div>
           </motion.div>
         </div>
-        <motion.div
-          className="mt-6"
-          variants={fadeIn}
-          initial="hidden"
-          animate={isVisible.services ? "visible" : "hidden"}
-          transition={{ delay: 0.6 }}
-        >
-          <motion.button
-            whileHover={{
-              scale: 1.05,
-              transition: { duration: 0.2 },
-            }}
-            whileTap={{ scale: 0.95 }}
-            className="font-montserrat bg-gray-700 text-white flex items-center justify-between px-6 py-3 rounded-md text-lg w-64 group"
-          >
-            {selectedService.title}
-            <FaArrowUpRightFromSquare className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-          </motion.button>
-        </motion.div>
       </section>
 
       {/* Commercial Projects Section */}
