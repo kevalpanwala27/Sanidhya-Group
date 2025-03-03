@@ -1,15 +1,22 @@
 "use client";
+import React from "react";
 
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import {
+  FaMapMarkerAlt,
+  FaPhoneAlt,
+  FaEnvelope,
+  FaClock,
+} from "react-icons/fa";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Head from "next/head";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
-export default function Contact() {
-  // Enhanced animation variants
-  const containerVariants = {
+// Animation variants
+const animations = {
+  container: {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -19,27 +26,96 @@ export default function Contact() {
         ease: "easeOut",
       },
     },
-  };
-
-  const itemVariants = {
+  },
+  item: {
     hidden: { y: 30, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: { duration: 0.6, ease: "easeOut" },
     },
-  };
-
-  const fadeIn = {
+  },
+  fadeIn: {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        duration: 1.2,
-        ease: "easeOut",
-      },
+      transition: { duration: 1.2, ease: "easeOut" },
     },
-  };
+  },
+  parallax: {
+    initial: { scale: 1.05 },
+    animate: { scale: 1 },
+    transition: { duration: 1.5, ease: "easeOut" },
+  },
+  heroText: {
+    initial: { opacity: 0, y: 40 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 1, delay: 0.2, ease: "easeOut" },
+  },
+  contactCard: {
+    whileHover: { scale: 1.02, y: -5 },
+    transition: { type: "spring", stiffness: 400, damping: 17 },
+  },
+};
+
+// Contact information data
+const contactInfo = [
+  {
+    icon: <FaMapMarkerAlt className="text-2xl text-[#9D5D27]" />,
+    title: "Our Address",
+    details: [
+      "Shilp House, Besides Rajpath Club,",
+      "Rajpath Rangoli Road, Bodakdev,",
+      "Ahmedabad - 380054, Gujarat, India.",
+    ],
+  },
+  {
+    icon: <FaPhoneAlt className="text-2xl text-[#9D5D27]" />,
+    title: "Phone",
+    details: ["+91 74358 11123", "+91 70696 13123"],
+  },
+  {
+    icon: <FaEnvelope className="text-2xl text-[#9D5D27]" />,
+    title: "Email",
+    details: ["sales@shilp.co.in", "saumil@shilp.co.in"],
+  },
+];
+
+// Business hours data
+const businessHours = [
+  { day: "Monday - Friday", hours: "9:00 AM - 6:00 PM" },
+  { day: "Saturday", hours: "10:00 AM - 4:00 PM" },
+  { day: "Sunday", hours: "Closed" },
+];
+
+export default function Contact() {
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsPageLoaded(true);
+  }, []);
+
+  // Contact card component for reusability
+  const ContactCard = ({ icon, title, details }) => (
+    <motion.div
+      className="flex items-start space-x-6 p-7 rounded-xl hover:bg-[#f9f5f0] transition-all duration-400 border border-transparent hover:border-[#e8d5c0] shadow-sm hover:shadow-md"
+      variants={animations.item}
+      whileHover={animations.contactCard.whileHover}
+      transition={animations.contactCard.transition}
+    >
+      <div className="bg-[#f1e6d9] p-4 rounded-full shadow-inner">{icon}</div>
+      <div>
+        <h3 className="font-['Montserrat'] font-semibold text-xl text-[#7b4920] mb-3">
+          {title}
+        </h3>
+        <div className="font-['Lato'] text-gray-700 leading-relaxed">
+          {details.map((line, index) => (
+            <p key={index}>{line}</p>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
 
   return (
     <>
@@ -63,13 +139,13 @@ export default function Contact() {
 
       <Header />
 
+      {/* Hero Section with Parallax Effect */}
       <section className="relative overflow-hidden">
-        {/* Enhanced Hero Section with Parallax Effect */}
         <motion.div
           className="w-full relative"
-          initial={{ scale: 1.05 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
+          initial={animations.parallax.initial}
+          animate={isPageLoaded ? animations.parallax.animate : "initial"}
+          transition={animations.parallax.transition}
         >
           <Image
             src="/image6.jpeg"
@@ -82,15 +158,15 @@ export default function Contact() {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40 flex flex-col items-center justify-center">
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+              initial={animations.heroText.initial}
+              animate={isPageLoaded ? animations.heroText.animate : "initial"}
+              transition={animations.heroText.transition}
               className="text-center px-6 max-w-4xl"
             >
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-['Cormorant_Garamond'] font-bold text-white mb-6 leading-tight">
                 Building Excellence <br /> Since 2004
               </h1>
-              <div className="w-24 h-1 bg-blue-500 mx-auto mb-6"></div>
+              <div className="w-24 h-1 bg-[#9D5D27] mx-auto mb-6"></div>
               <p className="font-['Montserrat'] text-lg md:text-xl text-gray-100 max-w-2xl mx-auto">
                 Creating exceptional spaces that transform lives and communities
               </p>
@@ -99,35 +175,39 @@ export default function Contact() {
         </motion.div>
       </section>
 
+      {/* Main Content Section */}
       <div className="bg-gradient-to-b from-gray-50 to-white">
         <motion.div
           className="container mx-auto py-24 px-6 md:px-10 lg:px-12 max-w-7xl"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-          variants={containerVariants}
+          variants={animations.container}
         >
+          {/* Page Title */}
           <motion.div
-            variants={itemVariants}
+            variants={animations.item}
             className="mb-16 text-center md:text-left"
           >
-            <h1 className="font-['Cormorant_Garamond'] text-4xl md:text-5xl lg:text-6xl font-bold text-blue-900 mb-4">
+            <h1 className="font-['Cormorant_Garamond'] text-4xl md:text-5xl lg:text-6xl font-bold text-[#7b4920] mb-4">
               Contact Us
             </h1>
-            <div className="w-24 h-1 bg-blue-600 mb-8 mx-auto md:mx-0"></div>
+            <div className="w-24 h-1 bg-[#9D5D27] mb-8 mx-auto md:mx-0"></div>
             <p className="font-['Montserrat'] text-gray-600 text-lg max-w-2xl mx-auto md:mx-0">
               We're committed to exceptional service and are here to address
               your inquiries
             </p>
           </motion.div>
 
+          {/* Two-column layout for contact info and map */}
           <motion.div
             className="grid md:grid-cols-2 gap-16 items-start"
-            variants={containerVariants}
+            variants={animations.container}
           >
+            {/* Left Column - Contact Information */}
             <div>
-              <motion.div variants={itemVariants} className="mb-12">
-                <h2 className="font-['Montserrat'] text-2xl lg:text-3xl font-semibold text-blue-800 mb-6">
+              <motion.div variants={animations.item} className="mb-12">
+                <h2 className="font-['Montserrat'] text-2xl lg:text-3xl font-semibold text-[#9D5D27] mb-6">
                   Get in Touch
                 </h2>
                 <p className="font-['Lato'] text-lg text-gray-700 leading-relaxed mb-5">
@@ -144,81 +224,37 @@ export default function Contact() {
                 </p>
               </motion.div>
 
-              <motion.div className="space-y-10" variants={containerVariants}>
-                <motion.div
-                  className="flex items-start space-x-6 p-7 rounded-xl hover:bg-blue-50 transition-all duration-400 border border-transparent hover:border-blue-100 shadow-sm hover:shadow-md"
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                >
-                  <div className="bg-blue-100 p-4 rounded-full shadow-inner">
-                    <FaMapMarkerAlt className="text-2xl text-blue-800" />
-                  </div>
-                  <div>
-                    <h3 className="font-['Montserrat'] font-semibold text-xl text-blue-900 mb-3">
-                      Our Address
-                    </h3>
-                    <p className="font-['Lato'] text-gray-700 leading-relaxed">
-                      Shilp House, Besides Rajpath Club, <br />
-                      Rajpath Rangoli Road, Bodakdev, <br />
-                      Ahmedabad - 380054, Gujarat, India.
-                    </p>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  className="flex items-start space-x-6 p-7 rounded-xl hover:bg-blue-50 transition-all duration-400 border border-transparent hover:border-blue-100 shadow-sm hover:shadow-md"
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                >
-                  <div className="bg-blue-100 p-4 rounded-full shadow-inner">
-                    <FaPhoneAlt className="text-2xl text-blue-800" />
-                  </div>
-                  <div>
-                    <h3 className="font-['Montserrat'] font-semibold text-xl text-blue-900 mb-3">
-                      Phone
-                    </h3>
-                    <p className="font-['Lato'] text-gray-700 leading-relaxed">
-                      +91 74358 11123
-                      <br />
-                      +91 70696 13123
-                    </p>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  className="flex items-start space-x-6 p-7 rounded-xl hover:bg-blue-50 transition-all duration-400 border border-transparent hover:border-blue-100 shadow-sm hover:shadow-md"
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                >
-                  <div className="bg-blue-100 p-4 rounded-full shadow-inner">
-                    <FaEnvelope className="text-2xl text-blue-800" />
-                  </div>
-                  <div>
-                    <h3 className="font-['Montserrat'] font-semibold text-xl text-blue-900 mb-3">
-                      Email
-                    </h3>
-                    <p className="font-['Lato'] text-gray-700 leading-relaxed">
-                      sales@shilp.co.in
-                      <br />
-                      saumil@shilp.co.in
-                    </p>
-                  </div>
-                </motion.div>
+              {/* Contact Cards */}
+              <motion.div
+                className="space-y-10"
+                variants={animations.container}
+              >
+                {contactInfo.map((info, index) => (
+                  <ContactCard
+                    key={index}
+                    icon={info.icon}
+                    title={info.title}
+                    details={info.details}
+                  />
+                ))}
               </motion.div>
             </div>
 
-            <motion.div variants={itemVariants} className="md:mt-14 lg:mt-16">
-              <h2 className="font-['Montserrat'] text-2xl lg:text-3xl font-semibold text-blue-800 mb-8">
+            {/* Right Column - Map and Business Hours */}
+            <motion.div
+              variants={animations.item}
+              className="md:mt-14 lg:mt-16"
+            >
+              <h2 className="font-['Montserrat'] text-2xl lg:text-3xl font-semibold text-[#9D5D27] mb-8">
                 Our Location
               </h2>
+
+              {/* Google Maps Integration */}
               <motion.div
                 className="rounded-xl overflow-hidden shadow-xl"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.4 }}
-                variants={fadeIn}
+                variants={animations.fadeIn}
               >
                 <iframe
                   className="w-full h-[400px] lg:h-[500px] border-0"
@@ -230,21 +266,25 @@ export default function Contact() {
                 ></iframe>
               </motion.div>
 
+              {/* Business Hours Card */}
               <motion.div
                 className="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-100 shadow-sm"
-                variants={itemVariants}
+                variants={animations.item}
                 whileHover={{ y: -3 }}
               >
-                <h3 className="font-['Montserrat'] text-lg font-semibold text-blue-800 mb-3">
-                  Business Hours
-                </h3>
+                <div className="flex items-center gap-3 mb-4">
+                  <FaClock className="text-lg text-[#9D5D27]" />
+                  <h3 className="font-['Montserrat'] text-lg font-semibold text-[#9D5D27]">
+                    Business Hours
+                  </h3>
+                </div>
                 <div className="font-['Lato'] text-gray-700 grid grid-cols-2 gap-2">
-                  <span>Monday - Friday:</span>
-                  <span>9:00 AM - 6:00 PM</span>
-                  <span>Saturday:</span>
-                  <span>10:00 AM - 4:00 PM</span>
-                  <span>Sunday:</span>
-                  <span>Closed</span>
+                  {businessHours.map((item, index) => (
+                    <React.Fragment key={index}>
+                      <span>{item.day}:</span>
+                      <span>{item.hours}</span>
+                    </React.Fragment>
+                  ))}
                 </div>
               </motion.div>
             </motion.div>

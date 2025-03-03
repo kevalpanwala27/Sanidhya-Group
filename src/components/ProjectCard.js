@@ -9,8 +9,6 @@ import {
   FaMapMarkerAlt,
   FaPhone,
 } from "react-icons/fa";
-import Header from "./Header";
-import Footer from "./Footer";
 
 const ProjectCard = ({
   title,
